@@ -14,44 +14,63 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         Login loginSystem = new Login();
+        MessageManager manager = new MessageManager();
 
-        System.out.println("--- WELCOME TO REGISTRATION ---");
-        System.out.print("Enter First Name: ");
-        String firstName = input.nextLine();
+        System.out.println("--- SYSTEM INITIALIZATION & REGISTRATION ---");
+        System.out.print("First Name: "); String first = input.nextLine();
+        System.out.print("Last Name: "); String last = input.nextLine();
+        System.out.print("Username: "); String user = input.nextLine();
+        System.out.print("Password: "); String pass = input.nextLine();
+        System.out.print("Cell Number (+27...): "); String cell = input.nextLine();
 
-        System.out.print("Enter Last Name: ");
-        String lastName = input.nextLine();
+        String regMessage = loginSystem.registerUser(user, pass, cell, first, last);
+        System.out.println("\nStatus: " + regMessage);
 
-        System.out.print("Create Username: ");
-        String username = input.nextLine();
+        if (!regMessage.contains("successfully captured")) return;
 
-        System.out.print("Create Password: ");
-        String password = input.nextLine();
+        System.out.println("\n--- LOGIN SYSTEM ---");
+        System.out.print("Username: "); String logUser = input.nextLine();
+        System.out.print("Password: "); String logPass = input.nextLine();
 
-        System.out.print("Enter Cell Phone Number (e.g. +27123456789): ");
-        String cellNumber = input.nextLine();
-
-        // Run registration validation
-        System.out.println("\n--- REGISTRATION STATUS ---");
-        String regMessage = loginSystem.registerUser(username, password, cellNumber, firstName, lastName);
-        System.out.println(regMessage);
-
-        // Break early if registration breaks formatting constraints
-        if (!regMessage.contains("successfully captured")) {
-            System.out.println("\nRegistration failed. Please restart and use correct formats.");
+        if (!loginSystem.loginUser(logUser, logPass)) {
+            System.out.println(loginSystem.returnLoginStatus(false));
             return;
         }
+        System.out.println(loginSystem.returnLoginStatus(true));
 
-        // Prompt for login verification
-        System.out.println("\n--- LOGIN TO YOUR ACCOUNT ---");
-        System.out.print("Enter Username: ");
-        String loginUser = input.nextLine();
+        // Part 2 Main Menu System Loop
+        int choice = 0;
+        while (choice != 3) {
+            System.out.println("\n=== MESSAGE LOGGING SYSTEM ===");
+            System.out.println("1. Add Message Entry");
+            System.out.println("2. Display Features (Coming Soon)");
+            System.out.println("3. Exit Application");
+            System.out.print("Select Menu Option: ");
+            
+            try {
+                choice = Integer.parseInt(input.nextLine());
+            } catch (Exception e) {
+                choice = 0;
+            }
 
-        System.out.print("Enter Password: ");
-        String loginPass = input.nextLine();
-
-        boolean loginSuccess = loginSystem.loginUser(loginUser, loginPass);
-        System.out.println("\n--- LOGIN STATUS ---");
-        System.out.println(loginSystem.returnLoginStatus(loginSuccess));
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Target Device ID: ");
+                    String devID = input.nextLine();
+                    System.out.print("Enter Core Message payload: ");
+                    String msg = input.nextLine();
+                    manager.addMessage(devID, msg);
+                    System.out.println("✔ Log Entry Saved and Processed Successfully!");
+                    break;
+                case 2:
+                    System.out.println("Reporting module pending Part 3 architecture arrays.");
+                    break;
+                case 3:
+                    System.out.println("System runtime terminated cleanly.");
+                    break;
+                default:
+                    System.out.println("Invalid selection string parsed.");
+            }
+        }
     }
 }
