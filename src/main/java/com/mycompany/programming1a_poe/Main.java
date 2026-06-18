@@ -12,77 +12,94 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        Login loginSystem = new Login();
-        MessageManager manager = new MessageManager();
+        Scanner keyboardInputScanner = new Scanner(System.in);
+        Login authenticationProcessor = new Login();
+        MessageManager dataArchiveCoordinator = new MessageManager();
 
         System.out.println("--- SYSTEM INITIALIZATION & REGISTRATION ---");
-        System.out.print("First Name: "); String first = input.nextLine();
-        System.out.print("Last Name: "); String last = input.nextLine();
-        System.out.print("Username: "); String user = input.nextLine();
-        System.out.print("Password: "); String pass = input.nextLine();
-        System.out.print("Cell Number (+27...): "); String cell = input.nextLine();
+        System.out.print("First Name: "); String userFirst = keyboardInputScanner.nextLine();
+        System.out.print("Last Name: "); String userLast = keyboardInputScanner.nextLine();
+        System.out.print("Username: "); String loginUserToken = keyboardInputScanner.nextLine();
+        System.out.print("Password: "); String loginSecretKey = keyboardInputScanner.nextLine();
+        System.out.print("Cell Number (+27...): "); String telecomLineNumber = keyboardInputScanner.nextLine();
 
-        String regMessage = loginSystem.registerUser(user, pass, cell, first, last);
-        System.out.println("\nStatus: " + regMessage);
+        String registrationProcessFeedback = authenticationProcessor.registerUser(loginUserToken, loginSecretKey, telecomLineNumber, userFirst, userLast);
+        System.out.println("\nStatus: " + registrationProcessFeedback);
 
-        if (!regMessage.contains("successfully captured")) return;
+        if (!registrationProcessFeedback.contains("successfully captured")) return;
 
         System.out.println("\n--- LOGIN SYSTEM ---");
-        System.out.print("Username: "); String logUser = input.nextLine();
-        System.out.print("Password: "); String logPass = input.nextLine();
+        System.out.print("Username: "); String loggingCredentialsUser = keyboardInputScanner.nextLine();
+        System.out.print("Password: "); String loggingCredentialsPass = keyboardInputScanner.nextLine();
 
-        if (!loginSystem.loginUser(logUser, logPass)) {
-            System.out.println(loginSystem.returnLoginStatus(false));
+        if (!authenticationProcessor.loginUser(loggingCredentialsUser, loggingCredentialsPass)) {
+            System.out.println(authenticationProcessor.returnLoginStatus(false));
             return;
         }
-        System.out.println(loginSystem.returnLoginStatus(true));
+        System.out.println(authenticationProcessor.returnLoginStatus(true));
 
-        // Part 3 Full Control Interface Loop
-        int choice = 0;
-        while (choice != 5) {
+        // Refactored looping system offering JSON visibility and programmatic batching
+        int diagnosticMenuSelection = 0;
+        while (diagnosticMenuSelection != 6) {
             System.out.println("\n=== MAIN ARCHIVE MENU ===");
-            System.out.println("1. Add Message Log");
+            System.out.println("1. Add Message Logs (Batch Entry)");
             System.out.println("2. Display Longest Message Record");
             System.out.println("3. Search for a Message Phrase");
             System.out.println("4. Delete Message Log via ID");
-            System.out.println("5. Exit & Generate Full Printout Report");
+            System.out.println("5. Read and Display Raw JSON File Data");
+            System.out.println("6. Exit & Generate Full Printout Report");
             System.out.print("Select Menu Option: ");
-            
+           
             try {
-                choice = Integer.parseInt(input.nextLine());
-            } catch (Exception e) {
-                choice = 0;
+                diagnosticMenuSelection = Integer.parseInt(keyboardInputScanner.nextLine());
+            } catch (Exception formatError) {
+                diagnosticMenuSelection = 0;
             }
 
-            switch (choice) {
+            switch (diagnosticMenuSelection) {
                 case 1:
-                    System.out.print("Enter Target Device ID: ");
-                    String devID = input.nextLine();
-                    System.out.print("Enter Core Message payload (Max 250 characters): ");
-                    String msg = input.nextLine();
-                    manager.addMessage(devID, msg);
-                    System.out.println("✔ Log Added Successfully!");
+                    System.out.print("How many message logs do you want to enter? ");
+                    int transactionBatchSize = 0;
+                    try { 
+                        transactionBatchSize = Integer.parseInt(keyboardInputScanner.nextLine()); 
+                    } catch (Exception e) { 
+                        transactionBatchSize = 0; 
+                    }
+                    
+                    // Rubric Specification: Iterative for-loop using index counter tracking
+                    for (int messageLoopCounter = 0; messageLoopCounter < transactionBatchSize; messageLoopCounter++) {
+                        System.out.println("\n--- Entering Message Log " + (messageLoopCounter + 1) + " of " + transactionBatchSize + " ---");
+                        System.out.print("Enter Target Device ID: ");
+                        String systemUnitTag = keyboardInputScanner.nextLine();
+                        System.out.print("Enter Core Message payload: ");
+                        String transactionTextSegment = keyboardInputScanner.nextLine();
+                        dataArchiveCoordinator.addMessage(systemUnitTag, transactionTextSegment);
+                        System.out.println("✔ Log Entry " + (messageLoopCounter + 1) + " saved to JSON!");
+                    }
                     break;
                 case 2:
-                    System.out.println("\n" + manager.getLongestMessageReport());
+                    System.out.println("\n" + dataArchiveCoordinator.getLongestMessageReport());
                     break;
                 case 3:
                     System.out.print("Enter text phrase search query: ");
-                    String query = input.nextLine();
-                    System.out.println(manager.searchByMessageText(query));
+                    String cryptographicSearchString = keyboardInputScanner.nextLine();
+                    System.out.println(dataArchiveCoordinator.searchByMessageText(cryptographicSearchString));
                     break;
                 case 4:
                     System.out.print("Enter absolute Message ID to delete: ");
-                    String deleteID = input.nextLine();
-                    if (manager.deleteMessageByID(deleteID)) {
-                        System.out.println("❌ Entry dropped successfully from architecture.");
+                    String deletionHashSequence = keyboardInputScanner.nextLine();
+                    if (dataArchiveCoordinator.deleteMessageByID(deletionHashSequence)) {
+                        System.out.println("❌ Entry dropped and JSON storage updated.");
                     } else {
                         System.out.println("⚠️ ID sequence not matched inside arrays.");
                     }
                     break;
                 case 5:
-                    System.out.println("\n" + manager.displayFullReport());
+                    System.out.println("\n=== RAW DATABASE JSON PRINTOUT ===");
+                    System.out.println(dataArchiveCoordinator.importDataFromJSON());
+                    break;
+                case 6:
+                    System.out.println("\n" + dataArchiveCoordinator.displayFullReport());
                     System.out.println("System runtime terminated cleanly.");
                     break;
                 default:

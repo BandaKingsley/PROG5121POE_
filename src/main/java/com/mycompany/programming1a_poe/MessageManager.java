@@ -8,86 +8,131 @@ package com.mycompany.programming1a_poe;
  *
  * @author Norothy
  */
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class MessageManager {
-    private String[] deviceIDs = new String[100];
-    private String[] messages = new String[100];
-    private String[] messageIDs = new String[100];
-    private int messageCount = 0;
+    // Parallel arrays for system architecture tracking
+    private String[] platformHardwareIDs = new String[100];
+    private String[] communicationPayloads = new String[100];
+    private String[] generatedSystemHashes = new String[100];
+    private int structuralRecordCounter = 0;
+    
+    // Hardcoded local JSON flat-file storage destination
+    private final String DATABASE_FILE_NAME = "archived_data.json";
 
-    public String generateMessageID(String deviceID, String message) {
-        Random rand = new Random();
-        int runningNum = rand.nextInt(900000) + 100000; 
-        
-        String cleanDevice = deviceID.length() >= 3 ? deviceID.substring(0, 3).toUpperCase() : deviceID.toUpperCase();
-        String cleanMessage = message.length() >= 3 ? message.substring(message.length() - 3).toUpperCase() : message.toUpperCase();
-        
-        return cleanDevice + ":" + runningNum + ":" + cleanMessage;
+    // Dynamic generation algorithm combining hardware details and random integers
+    public String generateMessageID(String hardwareUnit, String textPayload) {
+        Random trackingGen = new Random();
+        int uniqueMarker = trackingGen.nextInt(900000) + 100000;
+       
+        String hardwareToken = hardwareUnit.length() >= 3 ? hardwareUnit.substring(0, 3).toUpperCase() : hardwareUnit.toUpperCase();
+        String payloadToken = textPayload.length() >= 3 ? textPayload.substring(textPayload.length() - 3).toUpperCase() : textPayload.toUpperCase();
+       
+        return hardwareToken + ":" + uniqueMarker + ":" + payloadToken;
     }
 
-    public void addMessage(String deviceID, String message) {
-        if (messageCount < 100) {
-            deviceIDs[messageCount] = deviceID;
-            messages[messageCount] = message;
-            messageIDs[messageCount] = generateMessageID(deviceID, message);
-            messageCount++;
+    // Appends new message data, processes attributes, and pushes update to local JSON
+    public void addMessage(String hardwareUnit, String textPayload) {
+        if (structuralRecordCounter < 100) {
+            platformHardwareIDs[structuralRecordCounter] = hardwareUnit;
+            communicationPayloads[structuralRecordCounter] = textPayload;
+            generatedSystemHashes[structuralRecordCounter] = generateMessageID(hardwareUnit, textPayload);
+            structuralRecordCounter++;
+            exportDataToJSON(); // Dynamic write routine invocation
         }
     }
 
-    // === PART 3 FEATURES START HERE ===
+    // Manual string building routine writing JSON files without external packages
+    public void exportDataToJSON() {
+        try (PrintWriter diskWriter = new PrintWriter(new FileWriter(DATABASE_FILE_NAME))) {
+            diskWriter.println("[");
+            for (int index = 0; index < structuralRecordCounter; index++) {
+                diskWriter.println(" {");
+                diskWriter.println(" \"deviceID\": \"" + platformHardwareIDs[index] + "\",");
+                diskWriter.println(" \"messageID\": \"" + generatedSystemHashes[index] + "\",");
+                diskWriter.println(" \"message\": \"" + communicationPayloads[index] + "\"");
+                diskWriter.print(" }" + (index == structuralRecordCounter - 1 ? "" : ","));
+                diskWriter.println();
+            }
+            diskWriter.println("]");
+        } catch (IOException errorEvent) {
+            System.out.println("Persistent state serialization warning: " + errorEvent.getMessage());
+        }
+    }
 
-    // 1. Find the longest message string stored in the arrays
+    // Direct text stream reader to output the raw JSON format contents
+    public String importDataFromJSON() {
+        StringBuilder fileStreamBuffer = new StringBuilder();
+        try (BufferedReader diskReader = new BufferedReader(new FileReader(DATABASE_FILE_NAME))) {
+            String logicalDataLine;
+            while ((logicalDataLine = diskReader.readLine()) != null) {
+                fileStreamBuffer.append(logicalDataLine).append("\n");
+            }
+        } catch (IOException missingFileEvent) {
+            return "Flat file database sequence not established yet.";
+        }
+        return fileStreamBuffer.toString();
+    }
+
+    // Loops linear validation criteria across structure tracking long index records
     public String getLongestMessageReport() {
-        if (messageCount == 0) return "No messages found.";
-        int longestIndex = 0;
-        for (int i = 1; i < messageCount; i++) {
-            if (messages[i].length() > messages[longestIndex].length()) {
-                longestIndex = i;
+        if (structuralRecordCounter == 0) return "No messages found.";
+        int targetedPeakIndex = 0;
+        for (int i = 1; i < structuralRecordCounter; i++) {
+            if (communicationPayloads[i].length() > communicationPayloads[targetedPeakIndex].length()) {
+                targetedPeakIndex = i;
             }
         }
-        return "Device ID: " + deviceIDs[longestIndex] + "\nMessage ID: " + messageIDs[longestIndex] + "\nMessage: " + messages[longestIndex];
+        return "Device ID: " + platformHardwareIDs[targetedPeakIndex] + 
+               "\nMessage ID: " + generatedSystemHashes[targetedPeakIndex] + 
+               "\nMessage: " + communicationPayloads[targetedPeakIndex];
     }
 
-    // 2. Search arrays for matching text substrings
-    public String searchByMessageText(String targetText) {
-        StringBuilder output = new StringBuilder("--- SEARCH RESULTS --- \n");
-        boolean found = false;
-        for (int i = 0; i < messageCount; i++) {
-            if (messages[i].toLowerCase().contains(targetText.toLowerCase())) {
-                output.append("Device: ").append(deviceIDs[i])
-                      .append(" | ID: ").append(messageIDs[i])
-                      .append(" | Msg: ").append(messages[i]).append("\n");
-                found = true;
+    // Evaluates containment elements against sub-string arrays
+    public String searchByMessageText(String filteringCriterion) {
+        StringBuilder responsePayloadBuilder = new StringBuilder("--- SEARCH RESULTS --- \n");
+        boolean structuralMatchesFound = false;
+        for (int i = 0; i < structuralRecordCounter; i++) {
+            if (communicationPayloads[i].toLowerCase().contains(filteringCriterion.toLowerCase())) {
+                responsePayloadBuilder.append("Device: ").append(platformHardwareIDs[i])
+                      .append(" | ID: ").append(generatedSystemHashes[i])
+                      .append(" | Msg: ").append(communicationPayloads[i]).append("\n");
+                structuralMatchesFound = true;
             }
         }
-        return found ? output.toString() : "No messages found matching: " + targetText;
+        return structuralMatchesFound ? responsePayloadBuilder.toString() : "No messages found matching: " + filteringCriterion;
     }
 
-    // 3. Delete an entry by ID and shift arrays to close the gap
-    public boolean deleteMessageByID(String targetID) {
-        for (int i = 0; i < messageCount; i++) {
-            if (messageIDs[i].equalsIgnoreCase(targetID)) {
-                for (int j = i; j < messageCount - 1; j++) {
-                    deviceIDs[j] = deviceIDs[j + 1];
-                    messages[j] = messages[j + 1];
-                    messageIDs[j] = messageIDs[j + 1];
+    // Matches search parameters, deletes targets and shifts trailing indexes leftward
+    public boolean deleteMessageByID(String systemTargetHash) {
+        for (int i = 0; i < structuralRecordCounter; i++) {
+            if (generatedSystemHashes[i].equalsIgnoreCase(systemTargetHash)) {
+                for (int shiftingCursor = i; shiftingCursor < structuralRecordCounter - 1; shiftingCursor++) {
+                    platformHardwareIDs[shiftingCursor] = platformHardwareIDs[shiftingCursor + 1];
+                    communicationPayloads[shiftingCursor] = communicationPayloads[shiftingCursor + 1];
+                    generatedSystemHashes[shiftingCursor] = generatedSystemHashes[shiftingCursor + 1];
                 }
-                messageCount--;
+                structuralRecordCounter--;
+                exportDataToJSON(); // Synchronize file states
                 return true;
             }
         }
         return false;
     }
 
-    // 4. Print out every entry currently stored parallel in arrays
+    // Combines data points together to construct standard tabular logs
     public String displayFullReport() {
-        if (messageCount == 0) return "No messages archived.";
-        StringBuilder sb = new StringBuilder("=== FULL ARCHIVED REPORT ===\n");
-        for (int i = 0; i < messageCount; i++) {
-            sb.append(String.format("Record [%d]\nDevice ID : %s\nMessage ID: %s\nMessage : %s\n---------------------------\n", 
-                    (i+1), deviceIDs[i], messageIDs[i], messages[i]));
+        if (structuralRecordCounter == 0) return "No messages archived.";
+        StringBuilder compositeReportBuilder = new StringBuilder("=== FULL ARCHIVED REPORT ===\n");
+        for (int i = 0; i < structuralRecordCounter; i++) {
+            compositeReportBuilder.append(String.format("Record [%d]\nDevice ID : %s\nMessage ID: %s\nMessage : %s\n---------------------------\n",
+                    (i+1), platformHardwareIDs[i], generatedSystemHashes[i], communicationPayloads[i]));
         }
-        return sb.toString();
+        return compositeReportBuilder.toString();
     }
 }
