@@ -38,13 +38,15 @@ public class Main {
         }
         System.out.println(loginSystem.returnLoginStatus(true));
 
-        // Part 2 Main Menu System Loop
+        // Part 3 Full Control Interface Loop
         int choice = 0;
-        while (choice != 3) {
-            System.out.println("\n=== MESSAGE LOGGING SYSTEM ===");
-            System.out.println("1. Add Message Entry");
-            System.out.println("2. Display Features (Coming Soon)");
-            System.out.println("3. Exit Application");
+        while (choice != 5) {
+            System.out.println("\n=== MAIN ARCHIVE MENU ===");
+            System.out.println("1. Add Message Log");
+            System.out.println("2. Display Longest Message Record");
+            System.out.println("3. Search for a Message Phrase");
+            System.out.println("4. Delete Message Log via ID");
+            System.out.println("5. Exit & Generate Full Printout Report");
             System.out.print("Select Menu Option: ");
             
             try {
@@ -57,15 +59,30 @@ public class Main {
                 case 1:
                     System.out.print("Enter Target Device ID: ");
                     String devID = input.nextLine();
-                    System.out.print("Enter Core Message payload: ");
+                    System.out.print("Enter Core Message payload (Max 250 characters): ");
                     String msg = input.nextLine();
                     manager.addMessage(devID, msg);
-                    System.out.println("✔ Log Entry Saved and Processed Successfully!");
+                    System.out.println("✔ Log Added Successfully!");
                     break;
                 case 2:
-                    System.out.println("Reporting module pending Part 3 architecture arrays.");
+                    System.out.println("\n" + manager.getLongestMessageReport());
                     break;
                 case 3:
+                    System.out.print("Enter text phrase search query: ");
+                    String query = input.nextLine();
+                    System.out.println(manager.searchByMessageText(query));
+                    break;
+                case 4:
+                    System.out.print("Enter absolute Message ID to delete: ");
+                    String deleteID = input.nextLine();
+                    if (manager.deleteMessageByID(deleteID)) {
+                        System.out.println("❌ Entry dropped successfully from architecture.");
+                    } else {
+                        System.out.println("⚠️ ID sequence not matched inside arrays.");
+                    }
+                    break;
+                case 5:
+                    System.out.println("\n" + manager.displayFullReport());
                     System.out.println("System runtime terminated cleanly.");
                     break;
                 default:
@@ -74,3 +91,4 @@ public class Main {
         }
     }
 }
+
