@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.mycompany.programming1a_poe.MessageManagerTest" time="0.096" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.mycompany.programming1a_poe.MessageManagerTest" time="0.05" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="26"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,9 +15,8 @@
     <property name="user.country" value="ZA"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="E:\Apache NetBeans\jdk\bin"/>
-    <property name="sun.java.command" value="C:\Users\Norothy\AppData\Local\Temp\surefire1492479738630166429\surefirebooter-20260618215932141_3.jar C:\Users\Norothy\AppData\Local\Temp\surefire1492479738630166429 2026-06-18T21-59-31_918-jvmRun1 surefire-20260618215932141_1tmp surefire_0-20260618215932141_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\Norothy\AppData\Local\Temp\surefire16217912287275093027\surefirebooter-20260618233739511_3.jar C:\Users\Norothy\AppData\Local\Temp\surefire16217912287275093027 2026-06-18T23-37-39_298-jvmRun1 surefire-20260618233739511_1tmp surefire_0-20260618233739511_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="test" value="com.mycompany.programming1a_poe.MessageManagerTest"/>
     <property name="surefire.test.class.path" value="C:\Users\Norothy\Documents\GitHub\PROG5121POE_\target\test-classes;C:\Users\Norothy\Documents\GitHub\PROG5121POE_\target\classes;C:\Users\Norothy\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.3\junit-jupiter-api-5.10.3.jar;C:\Users\Norothy\.m2\repository\org\junit\platform\junit-platform-commons\1.10.3\junit-platform-commons-1.10.3.jar;C:\Users\Norothy\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Norothy\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.3\junit-jupiter-params-5.10.3.jar;C:\Users\Norothy\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.3\junit-jupiter-engine-5.10.3.jar;C:\Users\Norothy\.m2\repository\org\junit\platform\junit-platform-engine\1.10.3\junit-platform-engine-1.10.3.jar;C:\Users\Norothy\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="C:\Users\Norothy"/>
@@ -31,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Norothy\AppData\Local\Temp\surefire1492479738630166429\surefirebooter-20260618215932141_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Norothy\AppData\Local\Temp\surefire16217912287275093027\surefirebooter-20260618233739511_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="26.0.1+8"/>
@@ -62,6 +61,8 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="70.0"/>
   </properties>
-  <testcase name="testGenerateMessageID" classname="com.mycompany.programming1a_poe.MessageManagerTest" time="0.048"/>
-  <testcase name="testLongestMessageCalculation" classname="com.mycompany.programming1a_poe.MessageManagerTest" time="0.004"/>
+  <testcase name="testDeleteMessageByIDExecution" classname="com.mycompany.programming1a_poe.MessageManagerTest" time="0.02"/>
+  <testcase name="testGenerateMessageID" classname="com.mycompany.programming1a_poe.MessageManagerTest" time="0.002"/>
+  <testcase name="testSearchRecipientSuccess" classname="com.mycompany.programming1a_poe.MessageManagerTest" time="0.006"/>
+  <testcase name="testLongestMessageCalculation" classname="com.mycompany.programming1a_poe.MessageManagerTest" time="0.01"/>
 </testsuite>

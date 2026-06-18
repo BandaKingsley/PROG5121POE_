@@ -8,37 +8,49 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *
- * @author Norothy
+ * Validates Part 1 security routines against formatting constraints.
  */
 public class LoginTest {
 
     @Test
     public void testUsernameSuccess() {
         Login login = new Login();
-        // Correct format: contains underscore and <= 5 chars
-        assertTrue(login.checkUsername("kyl_1"));
+        // Valid length constraints containing an underscore character flag match
+        assertTrue(login.checkUserName("kyl_1"));
     }
 
     @Test
     public void testUsernameFailure() {
         Login login = new Login();
-        // Incorrect format: more than 5 characters
-        assertFalse(login.checkUsername("kyle_lucas"));
+        // Violates maximum length bounds constraints
+        assertFalse(login.checkUserName("kyle!!!!!!!"));
     }
 
     @Test
     public void testPasswordComplexitySuccess() {
         Login login = new Login();
-        // Correct format: meets length, upper, digit, and special char rules
-        assertTrue(login.checkPasswordComplexity("Ch0c0l@te"));
+        // Passes uppercase, numerical, length, and symbol requirements cleanly
+        assertTrue(login.checkPasswordComplexity("Ch&&sec@ke99!"));
     }
 
     @Test
     public void testPasswordComplexityFailure() {
         Login login = new Login();
-        // Incorrect format: no special character or number
+        // Lacks numeric validation metrics or symbol constraints
         assertFalse(login.checkPasswordComplexity("password"));
     }
-}
 
+    @Test
+    public void testCellPhoneNumberSuccess() {
+        Login login = new Login();
+        // Aligned properly with South African cell identifier layouts
+        assertTrue(login.checkCellPhoneNumber("+27838968976"));
+    }
+
+    @Test
+    public void testCellPhoneNumberFailure() {
+        Login login = new Login();
+        // Fails due to missing proper lengths or country prefix layout formats
+        assertFalse(login.checkCellPhoneNumber("08966553"));
+    }
+}

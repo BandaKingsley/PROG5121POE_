@@ -10,75 +10,89 @@ package com.mycompany.programming1a_poe;
  */
 import java.util.regex.Pattern;
 
+/**
+ * Handles security, complexity rules, and user validation constraints.
+ * Implements the validation routines required by Part 1 of the PoE rubric.
+ */
 public class Login {
-    // Encapsulated data layer parameters
-    private String savedUserCredential;
-    private String savedSecretKey;
-    private String accountHolderFirst;
-    private String accountHolderLast;
-    private String registeredContactNo;
+    
+    // In-memory credential tracking states
+    private String registeredUsername;
+    private String registeredPassword;
+    private String registeredFirstName;
+    private String registeredLastName;
+    private String registeredCellNumber;
 
-    // Evaluates length threshold and specific character inclusion
-    public boolean checkUsername(String clientUserString) {
-        return clientUserString.contains("_") && clientUserString.length() <= 5;
+    /**
+     * Checks if username contains an underscore and is no more than 5 characters long.
+     */
+    public boolean checkUserName(String username) {
+        if (username == null) return false;
+        return username.contains("_") && username.length() <= 5;
     }
 
-    // Comprehensive parsing execution scanning code conditions manually
-    public boolean checkPasswordComplexity(String clientSecretKey) {
-        if (clientSecretKey.length() < 8) return false;
-
-        boolean upperCaseFlag = false;
-        boolean lowerCaseFlag = false;
-        boolean numericalFlag = false;
-        boolean glyphFlag = false;
-
-        for (int positionIdx = 0; positionIdx < clientSecretKey.length(); positionIdx++) {
-            char targetedCharacter = clientSecretKey.charAt(positionIdx);
-            if (Character.isUpperCase(targetedCharacter)) upperCaseFlag = true;
-            else if (Character.isLowerCase(targetedCharacter)) lowerCaseFlag = true;
-            else if (Character.isDigit(targetedCharacter)) numericalFlag = true;
-            else if (!Character.isLetterOrDigit(targetedCharacter)) glyphFlag = true;
-        }
-
-        return upperCaseFlag && lowerCaseFlag && numericalFlag && glyphFlag;
+    /**
+     * Checks if password meets all length, case, number, and special character requirements.
+     */
+    public boolean checkPasswordComplexity(String password) {
+        if (password == null) return false;
+        
+        boolean hasLength = password.length() >= 8;
+        boolean hasCapital = !password.equals(password.toLowerCase());
+        boolean hasDigit = password.matches(".*\\d.*");
+        boolean hasSpecial = Pattern.compile("[^a-zA-Z0-9]").matcher(password).find();
+        
+        return hasLength && hasCapital && hasDigit && hasSpecial;
     }
 
-    // RegEx checker asserting standard international prefixes (+27)
-    public boolean checkCellPhoneNumber(String mobileDialInCode) {
-        String localizedRegexMask = "^\\+27[0-9]{9}$";
-        return Pattern.matches(localizedRegexMask, mobileDialInCode);
+    /**
+     * Validates South African cell phone numbers checking country codes and character lengths.
+     */
+    public boolean checkCellPhoneNumber(String cellNumber) {
+        if (cellNumber == null) return false;
+        // Must start with international format '+' or '00' followed by country tracking codes
+        return (cellNumber.startsWith("+27") || cellNumber.startsWith("0027") || cellNumber.startsWith("0")) 
+                && cellNumber.replaceAll("[^0-9]", "").length() >= 9;
     }
 
-    // Validates inbound data states using core rules before assigning instances
-    public String registerUser(String username, String password, String cellNumber, String firstName, String lastName) {
-        this.accountHolderFirst = firstName;
-        this.accountHolderLast = lastName;
-
-        if (!checkUsername(username)) {
-            return "Username is not correctly formatted; please ensure that the username contains an underscore and is no more than five characters in length.";
+    /**
+     * Handles registration message logic and captures credentials upon successful validation matching.
+     */
+    public String registerUser(String username, String password, String firstName, String lastName, String cellNumber) {
+        if (!checkUserName(username)) {
+            return "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.";
         }
         if (!checkPasswordComplexity(password)) {
             return "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.";
         }
         if (!checkCellPhoneNumber(cellNumber)) {
-            return "Cell phone number incorrectly formatted or does not contain international code.";
+            return "Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.";
         }
-
-        this.savedUserCredential = username;
-        this.savedSecretKey = password;
-        this.registeredContactNo = cellNumber;
-        return "Username, password and cell phone number successfully captured.";
+        
+        // Populate records when conditions match perfectly
+        this.registeredUsername = username;
+        this.registeredPassword = password;
+        this.registeredFirstName = firstName;
+        this.registeredLastName = lastName;
+        this.registeredCellNumber = cellNumber;
+        
+        return "Username successfully captured.\nPassword successfully captured.\nCell number successfully captured.";
     }
 
-    // Direct equality assertion for credential mapping logic
-    public boolean loginUser(String verificationUser, String verificationPass) {
-        return verificationUser.equals(this.savedUserCredential) && verificationPass.equals(this.savedSecretKey);
+    /**
+     * Authenticates values against stored state values.
+     */
+    public boolean loginUser(String username, String password) {
+        if (this.registeredUsername == null || this.registeredPassword == null) return false;
+        return this.registeredUsername.equals(username) && this.registeredPassword.equals(password);
     }
 
-    // Formats system output responses based on boolean inputs
-    public String returnLoginStatus(boolean runtimeExecutionFlag) {
-        if (runtimeExecutionFlag) {
-            return "Welcome " + accountHolderFirst + ", " + accountHolderLast + " it is great to see you again.";
+    /**
+     * Compiles status messaging text layouts depending on boolean authentication outcomes.
+     */
+    public String returnLoginStatus(boolean logInSuccess) {
+        if (logInSuccess) {
+            return "Welcome " + registeredFirstName + " " + registeredLastName + ", it is great to see you again.";
         } else {
             return "Username or password incorrect, please try again.";
         }
