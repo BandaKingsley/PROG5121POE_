@@ -1,22 +1,8 @@
 [
- {
- "deviceID": "+27834557896",
- "messageID": "+2:DIDY",
- "message": "Did you get the cake?"
- },
- {
- "deviceID": "+27838884567",
- "messageID": "+2:WHERE",
- "message": "Where are you? You are late! I have asked you to be on time."
- },
- {
- "deviceID": "+27834484567",
- "messageID": "+2:YOHOO",
- "message": "Yohoooo, I am at your gate."
- },
- {
- "deviceID": "0838884567",
- "messageID": "08:ITIS",
- "message": "It is dinner time !"
- }
+ { "deviceID": "+27834557896", "messageID": "+2:DIDY", "message": "Did you get the cake?" },
+ { "deviceID": "+27838884567", "messageID": "+2:WHERE", "message": "Where are you? You are late! I have asked you to be on time." },
+ { "deviceID": "+27834484567", "messageID": "+2:YOHOO", "message": "Yohoooo, I am at your gate." },
+ { "deviceID": "0838884567", "messageID": "08:ITIS", "message": "It is dinner time !" },
+ { "deviceID": "+27831234567", "messageID": "+2:TESTI", "message": "Testing message one." },
+ { "deviceID": "+27837654321", "messageID": "+2:TESTI", "message": "Testing a much longer message" }
 ]

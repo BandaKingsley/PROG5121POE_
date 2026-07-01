@@ -11,144 +11,106 @@ package com.mycompany.programming1a_poe;
 import java.util.Scanner;
 
 /**
- * Driver console entry file managing navigation states and input routing channels.
+ * Driver class: Handles console-based user interface and menu navigation.
+ * Updated with Field-Level Validation Trapping for robust error handling.
  */
 public class Main {
     public static void main(String[] args) {
-        Scanner keyboardInputScanner = new Scanner(System.in);
-        Login sessionSecurityCoordinator = new Login();
-        MessageManager dataArchiveCoordinator = new MessageManager();
+        Scanner inputReader = new Scanner(System.in);
+        Login authModule = new Login();
+        Message dataArchive = new Message();
         
-        boolean userIsAuthenticated = false;
-
-        System.out.println("=== SECURITY GATEWAY INTERFACE ===");
-        System.out.println("Complete registration details to build current profile state data:\n");
-
-        // Loop until profile parameters clear validation constraints correctly
+        System.out.println("--- QUICKCHAT SECURITY ACCESS ---");
+        
+        // --- 1. REGISTRATION PHASE (STEP-BY-STEP LOCK) ---
+        // Loops lock the user at the specific field until input is valid.
+        
+        String user = "";
         while (true) {
-            System.out.print("Select User Username: ");
-            String accountUserField = keyboardInputScanner.nextLine();
-            System.out.print("Select Secure Password string: ");
-            String accountSecretField = keyboardInputScanner.nextLine();
-            System.out.print("Enter Profile First Name: ");
-            String profileFirstField = keyboardInputScanner.nextLine();
-            System.out.print("Enter Profile Last Name: ");
-            String profileLastField = keyboardInputScanner.nextLine();
-            System.out.print("Enter Contact Cell Phone reference: ");
-            String contactPhoneField = keyboardInputScanner.nextLine();
+            System.out.print("Enter Username (must have '_', max 5 chars): ");
+            user = inputReader.nextLine();
+            if (authModule.checkUserName(user)) break;
+            System.out.println(">> Error: Invalid Username. Must contain '_' and be <= 5 chars.");
+        }
 
-            String registrationResultMsg = sessionSecurityCoordinator.registerUser(
-                accountUserField, accountSecretField, profileFirstField, profileLastField, contactPhoneField
-            );
-            System.out.println("\n" + registrationResultMsg);
+        String pass = "";
+        while (true) {
+            System.out.print("Enter Password (8+ chars, cap, digit, symbol): ");
+            pass = inputReader.nextLine();
+            if (authModule.checkPasswordComplexity(pass)) break;
+            System.out.println(">> Error: Invalid Password. Check complexity requirements.");
+        }
 
-            if (registrationResultMsg.contains("successfully captured")) {
-                System.out.println("\nAccount established safely. Proceeding to profile access challenge...");
+        System.out.print("Enter First Name: ");
+        String first = inputReader.nextLine();
+        System.out.print("Enter Last Name: ");
+        String last = inputReader.nextLine();
+
+        String phone = "";
+        while (true) {
+            System.out.print("Enter Cell Number (+27...): ");
+            phone = inputReader.nextLine();
+            if (authModule.checkCellPhoneNumber(phone)) break;
+            System.out.println(">> Error: Invalid Cell Number format.");
+        }
+
+        // Finalize registration
+        authModule.registerUser(user, pass, first, last, phone);
+        System.out.println("\nRegistration successful! Redirecting to login...");
+        
+        // --- 2. AUTHENTICATION PHASE ---
+        while (true) {
+            System.out.print("\nUsername: ");
+            String loginUser = inputReader.nextLine();
+            System.out.print("Password: ");
+            String loginPass = inputReader.nextLine();
+            
+            if (authModule.loginUser(loginUser, loginPass)) {
+                System.out.println("Access Granted. Welcome to QuickChat.");
                 break;
-            }
-            System.out.println("Initialization validation rejected. Let's restart registration steps again.\n");
-        }
-
-        // Challenge login loops until credentials match profile criteria safely
-        while (!userIsAuthenticated) {
-            System.out.println("\n--- PROFILE AUTHENTICATION STAGE ---");
-            System.out.print("Provide Username: ");
-            String inputUser = keyboardInputScanner.nextLine();
-            System.out.print("Provide Password: ");
-            String inputPass = keyboardInputScanner.nextLine();
-
-            boolean verificationToken = sessionSecurityCoordinator.loginUser(inputUser, inputPass);
-            System.out.println(sessionSecurityCoordinator.returnLoginStatus(verificationToken));
-
-            if (verificationToken) {
-                userIsAuthenticated = true;
+            } else {
+                System.out.println("Invalid credentials. Try again.");
             }
         }
-
-        System.out.println("\nWelcome to QuickChat.");
-        boolean processRunningStateFlag = true;
-
-        // Core workflow console option management loops
-        while (processRunningStateFlag) {
-            System.out.println("\n=================================");
-            System.out.println(" MAIN PLATFORM WORKSPACE ");
-            System.out.println("=================================");
-            System.out.println("1) Send Batch Message Records Collection");
-            System.out.println("2) Show Recently Sent Messages Report Summary");
-            System.out.println("3) Query Element Using Unique Hash ID Code");
-            System.out.println("4) Isolate Longest Message Frame Log");
-            System.out.println("5) Remove Specific Message Row Log");
-            System.out.println("6) Print Raw Database File JSON Contents");
-            System.out.println("7) Terminate Workspace Operations");
-            System.out.print("Choose execution parameter path [1-7]: ");
-
-            int structuralSelectionToken;
-            try {
-                structuralSelectionToken = Integer.parseInt(keyboardInputScanner.nextLine());
-            } catch (Exception parseFail) {
-                structuralSelectionToken = -1;
-            }
-
-            switch (structuralSelectionToken) {
-                case 1:
-                    System.out.print("How many message logs do you want to enter? ");
-                    int transactionBatchSize;
+        
+        // --- 3. PLATFORM WORKSPACE ---
+        boolean active = true;
+        while (active) {
+            System.out.println("\n1: Add Msg | 2: Report | 3: Search ID | 4: Longest Msg | 5: Delete | 6: View JSON | 7: Exit");
+            System.out.print("Select an option: ");
+            String choice = inputReader.nextLine();
+            
+            switch (choice) {
+                case "1":
+                    System.out.print("Enter number of messages: ");
                     try {
-                        transactionBatchSize = Integer.parseInt(keyboardInputScanner.nextLine());
-                    } catch (Exception e) {
-                        transactionBatchSize = 0;
-                    }
-
-                    for (int messageLoopCounter = 0; messageLoopCounter < transactionBatchSize; messageLoopCounter++) {
-                        System.out.println("\n--- Entering Message Log " + (messageLoopCounter + 1) + " of " + transactionBatchSize + " ---");
-                        System.out.print("Enter Target Recipient/Device ID: ");
-                        String systemUnitTag = keyboardInputScanner.nextLine();
-                        System.out.print("Enter Core Message text payload: ");
-                        String transactionTextSegment = keyboardInputScanner.nextLine();
-                        
-                        dataArchiveCoordinator.addMessage(systemUnitTag, transactionTextSegment);
-                        System.out.println("✔ Log Entry " + (messageLoopCounter + 1) + " saved to JSON!");
+                        int count = Integer.parseInt(inputReader.nextLine());
+                        for (int i = 0; i < count; i++) {
+                            System.out.print("Recipient: ");
+                            String rec = inputReader.nextLine();
+                            System.out.print("Message: ");
+                            String text = inputReader.nextLine();
+                            dataArchive.addMessage(rec, text);
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input! Please enter a numeric value.");
                     }
                     break;
-
-                case 2:
-                    System.out.println("\n=== SYSTEM BROADCAST ENTRIES REPOSITORY COMPILATION ===");
-                    System.out.println(dataArchiveCoordinator.displayFullReport());
+                case "2": System.out.println(dataArchive.displayFullReport()); break;
+                case "3": 
+                    System.out.print("Enter ID: ");
+                    System.out.println(dataArchive.searchByMessageID(inputReader.nextLine())); 
                     break;
-
-                case 3:
-                    System.out.print("Provide system Target Hash reference code to explore: ");
-                    String matchHashKey = keyboardInputScanner.nextLine();
-                    System.out.println("\n" + dataArchiveCoordinator.searchByMessageID(matchHashKey));
+                case "4": System.out.println("Longest: " + dataArchive.getLongestMessageReport()); break;
+                case "5": 
+                    System.out.print("Delete ID: ");
+                    System.out.println(dataArchive.deleteMessageByID(inputReader.nextLine())); 
                     break;
-
-                case 4:
-                    System.out.println("\n=== MAXIMUM PAYLOAD SIZE SUMMARY VALUE ===");
-                    System.out.println("\"" + dataArchiveCoordinator.getLongestMessageReport() + "\"");
-                    break;
-
-                case 5:
-                    System.out.print("Provide unique Hash reference index targeting removal row: ");
-                    String destructionHashKey = keyboardInputScanner.nextLine();
-                    System.out.println("\n" + dataArchiveCoordinator.deleteMessageByID(destructionHashKey));
-                    break;
-
-                case 6:
-                    System.out.println("\n=== RAW DATABASE JSON FLAT-FILE PRINTOUT ===");
-                    System.out.println(dataArchiveCoordinator.importDataFromJSON());
-                    break;
-
-                case 7:
-                    System.out.println("Closing operations workspace workspace safely. Data persistent streams written.");
-                    processRunningStateFlag = false;
-                    break;
-
-                default:
-                    System.out.println("Invalid selection parameter sequence entry choice made, retry selection.");
+                case "6": System.out.println(dataArchive.importDataFromJSON()); break;
+                case "7": active = false; break;
+                default: System.out.println("Invalid selection. Try again.");
             }
         }
-        keyboardInputScanner.close();
+        inputReader.close();
     }
 }
-
-
